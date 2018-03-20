@@ -32,7 +32,7 @@ public class Uniq {
                         caseInsensitive = true;
                         break;
                     case "-s":
-                        ignoreCharsUntil = Integer.valueOf(args[i+1]);
+                        ignoreCharsUntil = Integer.valueOf(args[++i]);
                         break;
                     case "-u":
                         uniqOnly = true;
@@ -41,7 +41,7 @@ public class Uniq {
                         countCopies = true;
                         break;
                     case "-o":
-                        outputName = args[i + 1];
+                        outputName = args[++i];
                         toFile = true;
                         break;
                     default:
