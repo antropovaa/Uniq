@@ -1,7 +1,7 @@
 /**
  * Class for creating matches between strings and the number of times they were repeated in the file/console.
  */
-public class Pair<M,S> {
+class Pair<M,S> {
     private M matches;
     private S string;
 

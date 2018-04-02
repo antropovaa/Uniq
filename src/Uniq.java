@@ -2,86 +2,14 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Utility for command line, that filters out adjacent, matching lines from input file INPUT,
- * writing the filtered data to output file OUTPUT.
+ * Utility for command line, that filters out adjacent, matching lines from input file,
+ * writing the filtered data to output file.
  */
 public class Uniq {
     public static void main(String[] args) throws IOException {
-        Parser pars = new Parser(args);
+        UniqParser pars = new UniqParser(args);
         ArrayList<String> result = inputAndProcess(pars);
         output(pars, result);
-    }
-
-    /**
-     * Additional class, that parse arguments and flags from command line.
-     */
-    private static class Parser {
-        private String inputName = "";
-        private String outputName = "";
-        private boolean caseInsensitive = false;
-        private int ignoreCharsUntil = 0;
-        private boolean uniqOnly = false;
-        private boolean countCopies = false;
-        private boolean toFile = false;
-        private boolean fromFile = false;
-
-        Parser(String[] args) {
-            for (int i = 0; i < args.length; i++)
-                switch (args[i]) {
-                    case "-i":
-                        caseInsensitive = true;
-                        break;
-                    case "-s":
-                        ignoreCharsUntil = Integer.valueOf(args[++i]);
-                        break;
-                    case "-u":
-                        uniqOnly = true;
-                        break;
-                    case "-c":
-                        countCopies = true;
-                        break;
-                    case "-o":
-                        outputName = args[++i];
-                        toFile = true;
-                        break;
-                    default:
-                        inputName = args[i];
-                        if (!inputName.equals(""))
-                            fromFile = true;
-                }
-        }
-
-        boolean isCaseInsensitive() {
-            return caseInsensitive;
-        }
-
-        int numberOfIgnoringChars() {
-            return ignoreCharsUntil;
-        }
-
-        boolean isUniqOnly() {
-            return uniqOnly;
-        }
-
-        boolean isCountCopies() {
-            return countCopies;
-        }
-
-        boolean isToFile() {
-            return toFile;
-        }
-
-        String getOutputName() {
-            return outputName;
-        }
-
-        boolean isFromFile() {
-            return fromFile;
-        }
-
-        String getInputName() {
-            return inputName;
-        }
     }
 
     /**
@@ -91,15 +19,24 @@ public class Uniq {
      * @return Array of edited strings.
      * @throws FileNotFoundException if input was aborted.
      */
-    private static ArrayList<String> inputAndProcess(Parser pars) throws IOException {
+    public static ArrayList<String> inputAndProcess(UniqParser pars) throws FileNotFoundException {
         Scanner input;
-
-        if (pars.isFromFile()) {
+        if (pars.isFromFile())
             input = new Scanner(new FileReader(new File(pars.getInputName())));
-        } else {
+        else
             input = new Scanner(new InputStreamReader(System.in));
-        }
+        ArrayList<Pair<Integer, String>> result = comparison(input, pars);
+        return makeFinalList(pars, result);
+    }
 
+    /**
+     * Compare strings depending on flags.
+     *
+     * @param input Scanner of input data.
+     * @param pars The result of parsing arguments.
+     * @return List of pairs of strings and number of it's duplicates.
+     */
+    public static ArrayList<Pair<Integer, String>> comparison(Scanner input, UniqParser pars) {
         ArrayList<Pair<Integer, String>> result = new ArrayList<>();
         while (input.hasNext()) {
             String thisString = input.nextLine();
@@ -127,21 +64,20 @@ public class Uniq {
                     result.add(new Pair<>(1, thisString));
             }
         }
-        return makeFinalList(pars, result);
+        return result;
     }
-
 
     /**
      * Combines all pairs into a list of strings based on flags.
      *
-     * @param pars The result of parsing arguments.
+     * @param pars   The result of parsing arguments.
      * @param result List of pairs with strings and number of their matches.
      * @return Final list of strings whose content depends on flags.
      */
-    private static ArrayList<String> makeFinalList(Parser pars, ArrayList<Pair<Integer, String>> result) {
+    public static ArrayList<String> makeFinalList(UniqParser pars, ArrayList<Pair<Integer, String>> result) {
         ArrayList<String> finalList = new ArrayList<>();
 
-        for (Pair<Integer, String> pair : result) {
+        for (Pair<Integer, String> pair : result)
             if (pars.isUniqOnly()) {
                 if (pair.getMatches() == 1)
                     finalList.add(pair.getString());
@@ -151,12 +87,9 @@ public class Uniq {
                         finalList.add(pair.toString());
                     else
                         finalList.add(pair.getString());
-                }
-                else {
+                } else
                     finalList.add(pair.getString());
-                }
             }
-        }
         return finalList;
     }
 
@@ -167,7 +100,7 @@ public class Uniq {
      * @param finalList Array of edited strings.
      * @throws IOException In case output was aborted.
      */
-    private static void output(Parser pars, ArrayList<String> finalList) throws IOException {
+    public static void output(UniqParser pars, ArrayList<String> finalList) throws IOException {
         if (pars.isToFile()) {
             File outputFile = new File(pars.getOutputName());
             FileWriter output = new FileWriter(outputFile);
