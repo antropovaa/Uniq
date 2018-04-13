@@ -1,5 +1,4 @@
-import org.junit.*;
-
+import org.junit.jupiter.api.Test;
 import java.io.*;
 import java.util.Scanner;
 
@@ -17,7 +16,7 @@ public class UniqTest {
         Scanner expected = new Scanner(expectedFile);
         Scanner actual = new Scanner(actualFile);
 
-        Assert.assertEquals(expectedFile.length(), actualFile.length());
+        assertEquals(expectedFile.length(), actualFile.length());
         while (expected.hasNext())
             assertEquals(expected.next(), actual.next());
 
