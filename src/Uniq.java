@@ -8,7 +8,7 @@ import java.util.*;
 public class Uniq {
     public static void main(String[] args) throws IOException {
         UniqParser pars = new UniqParser(args);
-        ArrayList<String> result = inputAndProcess(pars);
+        List<String> result = inputAndProcess(pars);
         output(pars, result);
     }
 
@@ -19,13 +19,13 @@ public class Uniq {
      * @return Array of edited strings.
      * @throws FileNotFoundException if input was aborted.
      */
-    public static ArrayList<String> inputAndProcess(UniqParser pars) throws FileNotFoundException {
+    public static List<String> inputAndProcess(UniqParser pars) throws FileNotFoundException {
         Scanner input;
         if (pars.isFromFile())
             input = new Scanner(new FileReader(new File(pars.getInputName())));
         else
             input = new Scanner(new InputStreamReader(System.in));
-        ArrayList<Pair<Integer, String>> result = comparison(input, pars);
+        List<Pair<Integer, String>> result = comparison(input, pars);
         return makeFinalList(pars, result);
     }
 
@@ -36,8 +36,8 @@ public class Uniq {
      * @param pars The result of parsing arguments.
      * @return List of pairs of strings and number of it's duplicates.
      */
-    public static ArrayList<Pair<Integer, String>> comparison(Scanner input, UniqParser pars) {
-        ArrayList<Pair<Integer, String>> result = new ArrayList<>();
+    public static List<Pair<Integer, String>> comparison(Scanner input, UniqParser pars) {
+        List<Pair<Integer, String>> result = new ArrayList<>();
         while (input.hasNext()) {
             String thisString = input.nextLine();
             if (result.isEmpty())
@@ -74,8 +74,8 @@ public class Uniq {
      * @param result List of pairs with strings and number of their matches.
      * @return Final list of strings whose content depends on flags.
      */
-    public static ArrayList<String> makeFinalList(UniqParser pars, ArrayList<Pair<Integer, String>> result) {
-        ArrayList<String> finalList = new ArrayList<>();
+    public static List<String> makeFinalList(UniqParser pars, List<Pair<Integer, String>> result) {
+        List<String> finalList = new ArrayList<>();
 
         for (Pair<Integer, String> pair : result)
             if (pars.isUniqOnly()) {
@@ -100,18 +100,15 @@ public class Uniq {
      * @param finalList Array of edited strings.
      * @throws IOException In case output was aborted.
      */
-    public static void output(UniqParser pars, ArrayList<String> finalList) throws IOException {
-        if (pars.isToFile()) {
-            File outputFile = new File(pars.getOutputName());
-            FileWriter output = new FileWriter(outputFile);
-            for (String string : finalList) {
-                output.write(string);
-                output.write("\n");
-            }
-            output.flush();
-            output.close();
-        } else
-            for (String string : finalList)
-                System.out.println(string);
+    public static void output(UniqParser pars, List<String> finalList) throws IOException {
+        PrintWriter output;
+        if (pars.isToFile())
+            output = new PrintWriter(pars.getOutputName());
+        else
+            output = new PrintWriter(System.out);
+        for (String string : finalList)
+            output.println(string);
+        output.flush();
+        output.close();
     }
 }
