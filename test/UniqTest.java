@@ -31,8 +31,7 @@ public class UniqTest {
 
     @Test
     public void fromCmdToFile() throws IOException {
-        String[] args = {"-i", "-u", "-s", "3", "-o", "test/examples/result2.txt", "Мама мыла раму", "МАША МЫЛА РАМУ",
-                "папа мыл раму", "Света мыла раму"};
+        String[] args = {"-i", "-u", "-s", "3", "-o", "test/examples/result2.txt"};
         Scanner input = new Scanner("Мама мыла раму\nМАША МЫЛА РАМУ\nпапа мыл раму\nСвета мыла раму");
         UniqParser parser = new UniqParser(args);
         Uniq.output(parser, Uniq.makeFinalList(parser, Uniq.comparison(input, parser)));
